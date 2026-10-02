@@ -1,11 +1,11 @@
--- Модуль: okno.lua (с поддержкой кнопок, тогглов и слайдеров)
+-- Модуль: okno.lua
 local CoreGui = game:GetService("CoreGui")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
 local WindowModule = {}
 
-function WindowModule.Init()
+function WindowModule.Init(callback)
     if CoreGui:FindFirstChild("MegaHubWindow") then
         CoreGui.MegaHubWindow:Destroy()
     end
@@ -120,7 +120,6 @@ function WindowModule.Init()
 
     local WindowAPI = {}
 
-    -- Функция создания вкладки, аналогичная WindUI
     function WindowAPI:Tab(config)
         local tabTitle = config.Title or "Tab"
 
@@ -165,7 +164,6 @@ function WindowModule.Init()
 
         local TabAPI = {}
 
-        -- 1. Кнопка (Button)
         function TabAPI:Button(data)
             local title = data.Title or "Button"
             local callback = data.Callback or function() end
@@ -191,7 +189,6 @@ function WindowModule.Init()
             end)
         end
 
-        -- 2. Переключатель (Toggle)
         function TabAPI:Toggle(data)
             local title = data.Title or "Toggle"
             local state = data.Value or false
@@ -219,7 +216,6 @@ function WindowModule.Init()
             TitleLab.TextSize = 13
             TitleLab.TextXAlignment = Enum.TextXAlignment.Left
 
-            -- Сам чекбокс (переключатель)
             local CheckBox = Instance.new("Frame", ToggleFrame)
             CheckBox.AnchorPoint = Vector2.new(1, 0.5)
             CheckBox.Position = UDim2.new(1, -12, 0.5, 0)
@@ -237,6 +233,13 @@ function WindowModule.Init()
         end
 
         return TabAPI
+    end
+
+    -- Если передан callback с функциями добавления элементов, выполняем его
+    if type(callback) == "function" then
+        task.spawn(function()
+            callback(WindowAPI)
+        end)
     end
 
     return WindowAPI
