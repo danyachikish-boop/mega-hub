@@ -98,7 +98,7 @@ function LoadScreen.Init(customTitle, customSubtitle)
         for i = 0, 100 do
             PercentText.Text = i .. "%"
             if i == 50 then
-                Subtitle.Text = "Подключение интерфейса..."
+                Subtitle.Text = "Загрузка интерфейса..."
             elseif i == 90 then
                 Subtitle.Text = "Готово!"
             end
@@ -106,7 +106,11 @@ function LoadScreen.Init(customTitle, customSubtitle)
         end
     end)
 
-    local function close()
+    -- Автоматический запуск okno.lua после завершения анимации
+    tween.Completed:Connect(function()
+        task.wait(0.3)
+        
+        -- Плавное закрытие экрана загрузки
         local fadeInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
         local fadeMain = TweenService:Create(MainFrame, fadeInfo, {BackgroundTransparency = 1})
         fadeMain:Play()
@@ -121,13 +125,20 @@ function LoadScreen.Init(customTitle, customSubtitle)
 
         fadeMain.Completed:Connect(function()
             ScreenGui:Destroy()
+            
+            -- Загружаем и открываем окну по твоей ссылке
+            local success, err = pcall(function()
+                local WindowModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/danyachikish-boop/mega-hub/refs/heads/main/okno.lua"))()
+                if WindowModule and type(WindowModule.Init) == "function" then
+                    WindowModule.Init()
+                end
+            end)
+            
+            if not success then
+                warn("Не удалось загрузить okno.lua: " .. tostring(err))
+            end
         end)
-    end
-
-    return {
-        Tween = tween,
-        Close = close
-    }
+    end)
 end
 
 return LoadScreen
