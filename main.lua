@@ -15,16 +15,22 @@ local Tabs = {
     Main = Window:AddTab({ Title = "Главная", Icon = "home" })
 }
 
--- Ссылки на ваши будущие файлы на GitHub (замените ссылки на свои после загрузки)
-local GITHUB_RAW = "https://raw.githubusercontent.com/ВАШ_НИК/РЕПОЗИТОРИЙ/main/"
+-- Прямая ссылка на твой репозиторий GitHub
+local GITHUB_RAW = "https://raw.githubusercontent.com/danyachikish-boop/mega-hub/refs/heads/main/"
 
--- Загружаем модули
-loadstring(game:HttpGet(GITHUB_RAW .. "fly.lua"))(Tabs.Main, Fluent)
-loadstring(game:HttpGet(GITHUB_RAW .. "noclip.lua"))(Tabs.Main, Fluent)
-loadstring(game:HttpGet(GITHUB_RAW .. "speedhack.lua"))(Tabs.Main, Fluent)
+-- Загружаем и подключаем модули
+local success, err = pcall(function()
+    loadstring(game:HttpGet(GITHUB_RAW .. "fly.lua"))(Tabs.Main, Fluent)
+    loadstring(game:HttpGet(GITHUB_RAW .. "noclip.lua"))(Tabs.Main, Fluent)
+    loadstring(game:HttpGet(GITHUB_RAW .. "speedhack.lua"))(Tabs.Main, Fluent)
+end)
+
+if not success then
+    warn("Ошибка при загрузке модулей: " .. tostring(err))
+end
 
 Fluent:Notify({
     Title = "Успешно!",
-    Content = "Все 5 модулей и интерфейс загружены!",
+    Content = "Интерфейс и все модули загружены!",
     Duration = 3
 })
